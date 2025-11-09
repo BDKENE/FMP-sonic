@@ -1,127 +1,140 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Towards Sonic Fossils – Elephant & Castle Edition</title>
-<style>
-body {
-  font-family: sans-serif;
-  background: #faecd3;
-  margin: 0;
-  padding: 0;
-  color: #2a2928;
-}
-
-.container {
-  width: 80%;
-  margin: auto;
-  padding: 40px 0;
-}
-
-.section {
-  background: #fff8ea;
-  border-radius: 18px;
-  padding: 28px;
-  margin-bottom: 40px;
-  border: 2px solid #d8c8a7;
-}
-
-.section h2 {
-  font-size: 22px;
-  margin-bottom: 12px;
-  color: #3c3b39;
-}
-
-.sound-image {
-  width: 100%;
-  border-radius: 12px;
-  border: 2px solid #ccbfa4;
-  display: block;
-  margin-bottom: 10px;
-}
-
-.caption {
-  font-size: 14px;
-  color: #6b675f;
-  margin-bottom: 14px;
-}
-
-audio {
-  width: 100%;
-  margin-top: 12px;
-}
-
-.track-label {
-  margin-top: 8px;
-  font-size: 16px;
-  font-weight: 500;
-}
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Towards Sonic Fossils – Elephant & Castle Edition</title>
+  <style>
+    :root{
+      --ink:#222; --sun:#ffcb6b; --sky:#2979ff; --coral:#ff7043; --mint:#21c7a8; --paper:#fff8e1;
+    }
+    body{font-family:'Poppins',system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;margin:0;color:var(--ink);text-align:center;background:
+      radial-gradient(80vw 80vw at -10% -20%, #fff1c7 0%, transparent 60%),
+      radial-gradient(60vw 60vw at 110% -10%, #e7f0ff 0%, transparent 60%),
+      linear-gradient(180deg,#fffdf7,#ffffff);}
+    header{position:relative;padding:48px 20px 28px;background:var(--sun);border-bottom:4px solid #333;box-shadow:0 4px 0 #333;}
+    header:after{content:"";position:absolute;left:0;right:0;bottom:-14px;height:14px;background:repeating-linear-gradient(90deg,transparent 0 18px,rgba(0,0,0,.08) 18px 22px);}
+    h1{font-size:2rem;margin:0 0 6px}
+    header p{margin:0;color:#4a3b1a}
+    .btn{background:var(--sky);color:#fff;border:none;border-radius:14px;padding:14px 26px;margin:10px;cursor:pointer;font-size:1rem;box-shadow:0 6px 0 #1c54b2;transition:.15s}
+    .btn.ghost{background:#fff;color:var(--ink);border:2px solid var(--ink);}
+    .wrap{max-width:980px;margin:32px auto;padding:0 20px}
+    .panel{background:#fff;border:3px solid #333;border-radius:24px;box-shadow:8px 8px 0 #333;padding:22px;margin:22px auto;}
+    .badge{position:absolute;left:-10px;top:-12px;background:#fff;border:2px solid #333;border-radius:999px;padding:6px 12px;font-weight:700;transform:rotate(-8deg)}
+    .illustration{width:100%;border:2px solid #333;border-radius:14px;margin:14px 0 6px;box-shadow:0 4px 0 #333}
+    .desc{font-size:.95rem;color:#333;margin:6px 0 0}
+    audio{width:100%;margin-top:10px}
+    .card{border:2px solid #ffb74d;background:var(--paper);border-radius:18px;padding:16px;text-align:left;margin-top:14px}
+  </style>
 </head>
-
 <body>
-<div class="container">
 
-<h1>Towards Sonic Fossils – Elephant & Castle Edition</h1>
-<p>This page presents four recorded auditory traces from Elephant & Castle across time. The intention is to listen, remember, and recognise how everyday sound carries memory, identity, and place.</p>
+<header>
+  <h1>🎧 Towards Sonic Fossils – Elephant & Castle Edition</h1>
+  <p>Speak, record, and leave your voice fossil in the city.</p>
+  <button class="btn" id="scrollBtn">Start</button>
+</header>
 
-<!-- PAST 1 -->
-<div class="section">
-  <h2>Past · Trocadero Cinema (1930s–1960s)</h2>
-  <img src="./img/Trocadero Cinema.png" class="sound-image">
-  <p class="caption">The Trocadero Cinema once stood as a cultural landmark at Elephant & Castle, hosting concerts, broadcasts, and large public gatherings.</p>
+<div class="wrap">
 
-  <p class="track-label">Track: Rudy Lewis, Organ — BBC Broadcast (Historic Recording)</p>
-  <audio controls>
-    <source src="./audio/rudy-lewis-trocadero.mp3" type="audio/mpeg">
-  </audio>
+  <!-- LISTEN -->
+  <section class="panel">
+    <div class="badge">LISTEN DECK</div>
+    <h2>Listen to Sonic Layers</h2>
+    <p>Explore Elephant & Castle’s soundscape across <b>Past</b> and <b>Present</b>.</p>
 
-  <p>Historic broadcast ambience recalling the grand hall acoustics of the Trocadero Cinema — a soundscape now absent, but still resonant in memory.</p>
-</div>
+    <!-- PAST -->
+    <div class="card">
+      <strong>Past — Trocadero Cinema & Market Centre</strong>
+      <img id="pastImg" class="illustration" src="./img/trocadero-cinema.png">
+      <div style="display:flex;align-items:center;justify-content:center;gap:10px;">
+        <button class="btn ghost" id="pastPrev">◀</button>
+        <span id="pastLabel"></span>
+        <button class="btn ghost" id="pastNext">▶</button>
+      </div>
+      <audio id="pastAudio" controls></audio>
+      <p id="pastDesc" class="desc"></p>
+    </div>
 
-<!-- PAST 2 -->
-<div class="section">
-  <h2>Past · Elephant Shopping Centre (1960s–2020)</h2>
-  <img src="./img/shopping centre elephant and castle.png" class="sound-image">
-  <p class="caption">Before demolition, the Elephant Shopping Centre served as a lively multicultural hub, filled with small shops, food stalls, migrant businesses, and everyday bustle.</p>
+    <!-- PRESENT -->
+    <div class="card">
+      <strong>Present — Students & Transformation</strong>
+      <div style="display:flex;align-items:center;justify-content:center;gap:10px;">
+        <button class="btn ghost" id="presentPrev">◀</button>
+        <span id="presentLabel"></span>
+        <button class="btn ghost" id="presentNext">▶</button>
+      </div>
+      <audio id="presentAudio" controls></audio>
+      <p id="presentDesc" class="desc"></p>
+    </div>
 
-  <p class="track-label">Track: Market Voices — Indoor Public Walkway</p>
-  <audio controls>
-    <source src="./audio/elephant-shopping-centre.mp3" type="audio/mpeg">
-  </audio>
-
-  <p>A dense mixture of overlapping speech, movement, and commerce — capturing a social ecosystem that has since been dispersed across the city.</p>
-</div>
-
-<!-- PRESENT 1 -->
-<div class="section">
-  <h2>Present · UAL Canteen</h2>
-  <p class="caption">Today, students gather, share meals, talk, rest, socialize, and create their own patterns of belonging in the campus interior.</p>
-
-  <p class="track-label">Track: UAL Students — Communal Dining Ambience</p>
-  <audio controls>
-    <source src="./audio/ual-canteen.mp3" type="audio/mpeg">
-  </audio>
-
-  <p>An atmosphere of casual conversation and shared presence — new rhythms of community forming in transitional urban space.</p>
-</div>
-
-<!-- PRESENT 2 -->
-<div class="section">
-  <h2>Present · Construction Site (Elephant Park & Redevelopment)</h2>
-  <p class="caption">The area is now dominated by cranes, concrete frames, and the sound of continuous redevelopment.</p>
-
-  <p class="track-label">Track: Construction Machinery — Street-Level Recording</p>
-  <audio controls>
-    <source src="./audio/construction-site.mp3" type="audio/mpeg">
-  </audio>
-
-  <p>The sonic texture of transformation: drilling, reversing alarms, metal impacts, and engines — documenting a moment of urban transition.</p>
-</div>
+  </section>
 
 </div>
+
+<script>
+const pastTracks = [
+  {
+    title: "Rudy Lewis, organ — BBC Broadcast, Trocadero Cinema",
+    url: "./audio/rudy-lewis-trocadero.mp3",
+    img: "./img/trocadero-cinema.png",
+    desc: "Former cinema sound spilling through grand space — echo, auditorium resonance, cultural gathering memory."
+  },
+  {
+    title: "Market Traders’ Shouts — Elephant Shopping Centre",
+    url: "./audio/elephant-shopping-centre.mp3",
+    img: "./img/elephant-shopping-centre.png",
+    desc: "A layered marketplace buzz: overlapping voices, movement, and informal community rhythms."
+  }
+];
+
+const presentTracks = [
+  {
+    title: "UAL Students’ Canteen",
+    url: "./audio/ual-canteen.mp3",
+    desc: "Shared tables, conversations, plates and laughter — everyday social life."
+  },
+  {
+    title: "Construction Site",
+    url: "./audio/construction-site.mp3",
+    desc: "Rhythms of redevelopment: scaffolds, drills, reversing beeps marking urban transition."
+  }
+];
+
+let pastIdx = 0;
+let presentIdx = 0;
+
+const pastAudio = document.getElementById("pastAudio");
+const pastLabel = document.getElementById("pastLabel");
+const pastImg = document.getElementById("pastImg");
+const pastDesc = document.getElementById("pastDesc");
+
+const presentAudio = document.getElementById("presentAudio");
+const presentLabel = document.getElementById("presentLabel");
+const presentDesc = document.getElementById("presentDesc");
+
+function render(){
+  let p = pastTracks[pastIdx];
+  pastAudio.src = p.url;
+  pastLabel.textContent = `Track ${pastIdx+1}/2 · ${p.title}`;
+  pastImg.src = p.img;
+  pastDesc.textContent = p.desc;
+
+  let c = presentTracks[presentIdx];
+  presentAudio.src = c.url;
+  presentLabel.textContent = `Track ${presentIdx+1}/2 · ${c.title}`;
+  presentDesc.textContent = c.desc;
+}
+render();
+
+document.getElementById("pastPrev").onclick = () => { pastIdx=(pastIdx-1+2)%2; render(); pastAudio.play(); };
+document.getElementById("pastNext").onclick = () => { pastIdx=(pastIdx+1)%2; render(); pastAudio.play(); };
+document.getElementById("presentPrev").onclick = () => { presentIdx=(presentIdx-1+2)%2; render(); presentAudio.play(); };
+document.getElementById("presentNext").onclick = () => { presentIdx=(presentIdx+1)%2; render(); presentAudio.play(); };
+
+document.getElementById("scrollBtn").onclick = () =>
+  window.scrollTo({top: window.innerHeight * 0.3, behavior: "smooth"});
+</script>
+
 </body>
 </html>
-
-
