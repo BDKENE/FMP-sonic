@@ -117,8 +117,44 @@
 
     <!-- ARCHIVE -->
     <section class="panel">
-      <div class="badge">ARCHIVE FEED</div>
-      <div id="audioContainer" class="list"></div>
+     <section class="archive">
+    <ul id="recordingsList">
+        <li>
+            <span class="rec-index">001</span>
+            <audio controls src="audio/rec1.m4a"></audio>
+            <p class="rec-text">"I’m graduating soon… Elephant & Castle holds so many moments for me. I’ll miss this place."</p>
+        </li>
+
+        <li>
+            <span class="rec-index">002</span>
+            <audio controls src="audio/spk2.wav"></audio>
+            <p class="rec-text">"I’m excited for the new campus, but this old building shaped us. I hope the new place keeps its spirit."</p>
+        </li>
+    </ul>
+</section>
+
+<style>
+.rec-index {
+    font-weight: 600;
+    margin-right: 8px;
+    color: #333;
+}
+.archive ul {
+    list-style: none;
+    padding: 0;
+}
+.archive li {
+    margin-bottom: 14px;
+    display: flex;
+    flex-direction: column;
+}
+.rec-text {
+    margin-top: 6px;
+    opacity: 0.8;
+    font-size: 14px;
+}
+</style>
+
       <p class="hint">Your latest recording appears at the top. Files stay in this browser for demo purposes.</p>
     </section>
   </div>
@@ -292,6 +328,7 @@
   </script>
 </body>
 </html>
+
 
 
 
