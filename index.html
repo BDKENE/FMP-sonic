@@ -294,4 +294,158 @@
 </html>
 
 
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Towards Sonic Fossils — Elephant & Castle Edition</title>
+  <style>
+    body {
+      background: #F4F1E8;
+      font-family: Arial, sans-serif;
+      margin: 0; padding: 0;
+      color: #333;
+    }
+    header {
+      padding: 24px;
+      text-align: center;
+      font-size: 20px;
+      font-weight: bold;
+      background: #FFD47E;
+    }
+    .section {
+      padding: 20px 28px;
+      border-bottom: 1px solid #ddd;
+    }
+    h2 { margin: 0 0 12px 0; font-size: 18px; font-weight: bold; }
+    audio { width: 100%; outline: none; }
+    .card {
+      background: white;
+      border-radius: 10px;
+      padding: 16px;
+      margin-top: 14px;
+      border: 1px solid #ddd;
+    }
+    .btn {
+      border: none;
+      padding: 6px 12px;
+      cursor: pointer;
+      border-radius: 6px;
+      font-size: 14px;
+    }
+    .btn.primary { background: #FF8C42; color: #fff; }
+    .btn.ghost { background: #eee; color: #555; }
+  </style>
+</head>
+<body>
+
+<header>
+  Towards Sonic Fossils — Elephant & Castle Edition
+</header>
+
+<div class="section">
+  <h2>Listen</h2>
+  <div><strong>Past — Markets & Trocadero Cinema</strong></div>
+  <audio controls src="rec1.m4a"></audio>
+
+  <div style="margin-top:12px;"><strong>Present — Commute, Riverside, Students</strong></div>
+  <audio controls src="spk2.wav"></audio>
+</div>
+
+<div class="section">
+  <h2>Record Your Voice</h2>
+  <button id="recordBtn" class="btn primary">🎙 Start Recording</button>
+  <button id="stopBtn" class="btn ghost" disabled>■ Stop</button>
+  <audio id="playback" controls style="display:none; margin-top:14px;"></audio>
+  <button id="saveBtn" class="btn primary" style="display:none; margin-top:10px;">Add to Archive</button>
+</div>
+
+<div class="section">
+  <h2>Archive Feed</h2>
+  <div id="feed"></div>
+</div>
+
+<script>
+let mediaRecorder, audioChunks = [];
+let feed = document.getElementById("feed");
+let recordingCount = 2; // because we preloaded #001 and #002
+
+// Preload existing entries
+const seeded = [
+  { num:'001', url:'rec1.m4a' },
+  { num:'002', url:'spk2.wav' }
+];
+
+seeded.forEach(item => {
+  const card = document.createElement('div');
+  card.className = 'card';
+  card.innerHTML = `
+    <strong>#${item.num}</strong>
+    <audio controls src="${item.url}" style="margin-top:8px"></audio>
+    <button class="btn ghost likeBtn" style="margin-top:10px">🤍 0</button>
+  `;
+  feed.append(card);
+
+  let likes = 0;
+  card.querySelector('.likeBtn').onclick = () => {
+    likes++;
+    card.querySelector('.likeBtn').textContent = `❤️ ${likes}`;
+  };
+});
+
+// Recording controls
+document.getElementById("recordBtn").onclick = async () => {
+  let stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+  mediaRecorder = new MediaRecorder(stream);
+  audioChunks = [];
+  mediaRecorder.start();
+  document.getElementById("recordBtn").disabled = true;
+  document.getElementById("stopBtn").disabled = false;
+
+  mediaRecorder.ondataavailable = e => { audioChunks.push(e.data); };
+};
+
+document.getElementById("stopBtn").onclick = () => {
+  mediaRecorder.stop();
+  document.getElementById("recordBtn").disabled = false;
+  document.getElementById("stopBtn").disabled = true;
+
+  mediaRecorder.onstop = () => {
+    let blob = new Blob(audioChunks, { type:'audio/webm' });
+    let url = URL.createObjectURL(blob);
+    let playback = document.getElementById("playback");
+    playback.src = url;
+    playback.style.display = "block";
+    document.getElementById("saveBtn").style.display = "inline-block";
+  };
+};
+
+document.getElementById("saveBtn").onclick = () => {
+  recordingCount++;
+  const idNumber = String(recordingCount).padStart(3,'0');
+  const url = document.getElementById("playback").src;
+
+  const card = document.createElement('div');
+  card.className = 'card';
+  card.innerHTML = `
+    <strong>#${idNumber}</strong>
+    <audio controls src="${url}" style="margin-top:8px"></audio>
+    <button class="btn ghost likeBtn" style="margin-top:10px">🤍 0</button>
+  `;
+  feed.prepend(card);
+
+  let likes = 0;
+  card.querySelector('.likeBtn').onclick = () => {
+    likes++;
+    card.querySelector('.likeBtn').textContent = `❤️ ${likes}`;
+  };
+
+  // reset UI
+  document.getElementById("playback").style.display="none";
+  document.getElementById("saveBtn").style.display="none";
+};
+</script>
+
+</body>
+</html>
 
