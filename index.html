@@ -117,10 +117,26 @@
 
     <!-- ARCHIVE -->
     <section class="panel">
-      <div class="badge">ARCHIVE FEED</div>
-      <div id="audioContainer" class="list"></div>
-      <p class="hint">Your latest recording appears at the top. Files stay in this browser for demo purposes.</p>
-    </section>
+  <div class="badge">ARCHIVE FEED</div>
+  <h2 style="margin:6px 0 10px">Community Voice Archive</h2>
+  <p class="hint">Recent contributions from Elephant & Castle</p>
+
+  <div class="list" id="audioContainer">
+    <div class="card">
+      <strong>001 · “Graduation reflections”</strong>
+      <audio controls src="./audio/rec1.m4a"></audio>
+      <button class="btn ghost" onclick="this.innerText='❤️ Liked'">👍 Like</button>
+    </div>
+
+    <div class="card">
+      <strong>002 · “Looking ahead to the new campus”</strong>
+      <audio controls src="./audio/spk2.wav"></audio>
+      <button class="btn ghost" onclick="this.innerText='❤️ Liked'">👍 Like</button>
+    </div>
+  </div>
+
+  <p class="hint">More voices appear here when contributed.</p>
+</section>
   </div>
 
   <canvas class="confetti" id="confetti"></canvas>
@@ -292,6 +308,7 @@
   </script>
 </body>
 </html>
+
 
 
 
