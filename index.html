@@ -282,16 +282,18 @@
     stopBtn.addEventListener('click', stopRecording);
 
     // Pre-seeded demo cards (可保留/删掉)
-    window.addEventListener('DOMContentLoaded', ()=>{
-      const seeded = [
-        { title:'Resident Memory – Walworth Road', url:'./audio/ual-canteen.mp3' },
-        { title:'Student Note – Lunch Break', url:'./audio/elephant-shopping-centre.mp3' }
-      ];
-      seeded.forEach(item=> addCard(item.url, item.title));
-    });
+    window.addEventListener('DOMContentLoaded', ()=> {
+  const seeded = [
+    { title:'Graduate Reflection – Final Week on Campus', url:'./audio/rec1.m4a' },
+    { title:'Looking Forward – New Campus & Thanks to the Old', url:'./audio/spk2.wav' }
+  ];
+  seeded.forEach(item=> addCard(item.url, item.title));
+});
+
   </script>
 </body>
 </html>
+
 
 
 
