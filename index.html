@@ -253,13 +253,61 @@
       startBtn.disabled=false; stopBtn.disabled=true;
     }
 
-    function addCard(url,label){
-      const card = document.createElement('div');
-      card.className = 'card';
-      const title = label || 'New Sound Added to Archive';
-      card.innerHTML = `<strong>${title}</strong>`;
-      const audio = document.createElement('audio');
-      audio.controls = true; audio.src = url; audio.setAttribute('aria-label','Recording playback');
+    let archiveCount = 0; // numbering
+
+function addCard(url, label, locked=false){
+  archiveCount += 1;
+  const number = String(archiveCount).padStart(3, '0');
+
+  const card = document.createElement('div');
+  card.className = 'card';
+
+  card.innerHTML = `
+    <strong>${number} · ${label || "Voice Contribution"}</strong>
+  `;
+
+  const audio = document.createElement('audio');
+  audio.controls = true;
+  audio.src = url;
+
+  // ❤️ Like button area
+  const likeWrap = document.createElement('div');
+  likeWrap.style.marginTop = '6px';
+  likeWrap.style.display = 'flex';
+  likeWrap.style.alignItems = 'center';
+  likeWrap.style.gap = '8px';
+
+  const likeBtn = document.createElement('button');
+  likeBtn.textContent = '❤️ Like';
+  likeBtn.className = 'btn ghost';
+  likeBtn.style.padding = '6px 12px';
+
+  const likeCount = document.createElement('span');
+  likeCount.textContent = '0';
+
+  likeBtn.onclick = () => {
+    likeCount.textContent = String(Number(likeCount.textContent) + 1);
+  };
+
+  likeWrap.appendChild(likeBtn);
+  likeWrap.appendChild(likeCount);
+
+  card.appendChild(audio);
+  card.appendChild(likeWrap);
+
+  audioContainer.prepend(card);
+}
+
+// --- 固定展示的两条录音（你上传的那两个） ---
+window.addEventListener('DOMContentLoaded', ()=>{
+
+  // recording 001 — female student reflection
+  addCard('./rec1.m4a', "Student Reflection", true);
+
+  // recording 002 — male future campus message
+  addCard('./spk2.wav', "Looking Ahead", true);
+});
+
 
       const actions = document.createElement('div');
       actions.style.marginTop='8px';
@@ -282,16 +330,65 @@
     stopBtn.addEventListener('click', stopRecording);
 
     // Pre-seeded demo cards (可保留/删掉)
-    window.addEventListener('DOMContentLoaded', ()=>{
-      const seeded = [
-        { title:'Resident Memory – Walworth Road', url:'./audio/ual-canteen.mp3' },
-        { title:'Student Note – Lunch Break', url:'./audio/elephant-shopping-centre.mp3' }
-      ];
-      seeded.forEach(item=> addCard(item.url, item.title));
-    });
+    let archiveCount = 0; // numbering
+
+function addCard(url, label, locked=false){
+  archiveCount += 1;
+  const number = String(archiveCount).padStart(3, '0');
+
+  const card = document.createElement('div');
+  card.className = 'card';
+
+  card.innerHTML = `
+    <strong>${number} · ${label || "Voice Contribution"}</strong>
+  `;
+
+  const audio = document.createElement('audio');
+  audio.controls = true;
+  audio.src = url;
+
+  // ❤️ Like button area
+  const likeWrap = document.createElement('div');
+  likeWrap.style.marginTop = '6px';
+  likeWrap.style.display = 'flex';
+  likeWrap.style.alignItems = 'center';
+  likeWrap.style.gap = '8px';
+
+  const likeBtn = document.createElement('button');
+  likeBtn.textContent = '❤️ Like';
+  likeBtn.className = 'btn ghost';
+  likeBtn.style.padding = '6px 12px';
+
+  const likeCount = document.createElement('span');
+  likeCount.textContent = '0';
+
+  likeBtn.onclick = () => {
+    likeCount.textContent = String(Number(likeCount.textContent) + 1);
+  };
+
+  likeWrap.appendChild(likeBtn);
+  likeWrap.appendChild(likeCount);
+
+  card.appendChild(audio);
+  card.appendChild(likeWrap);
+
+  audioContainer.prepend(card);
+}
+
+// --- 固定展示的两条录音（你上传的那两个） ---
+window.addEventListener('DOMContentLoaded', ()=>{
+
+  // recording 001 — female student reflection
+  addCard('./rec1.m4a', "Student Reflection", true);
+
+  // recording 002 — male future campus message
+  addCard('./spk2.wav', "Looking Ahead", true);
+});
+
   </script>
 </body>
 </html>
+
 
 
 
