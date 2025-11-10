@@ -311,5 +311,11 @@
 
 
 
+// Like button toggle
+document.addEventListener('click', e=>{
+  if(e.target.classList.contains('like-btn')){
+    e.target.textContent = e.target.textContent.includes('♡') ? '❤️ Liked' : '♡ Like';
+  }
+});
 
 
