@@ -79,8 +79,8 @@
         const ArrowDown = (props) => <IconWrapper {...props}><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></IconWrapper>;
         const Disc = (props) => <IconWrapper {...props}><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/></IconWrapper>;
         const MapPin = (props) => <IconWrapper {...props}><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></IconWrapper>;
-        const Maximize = (props) => <IconWrapper {...props}><path d="M8 3H5a2 2 0 0 0-2 2v3"/><path d="M21 8V5a2 2 0 0 0-2-2h-3"/><path d="M3 16v3a2 2 0 0 0 2 2h3"/><path d="M16 21h3a2 2 0 0 0 2-2v-3"/></IconWrapper>;
-
+        // Maximize icon is no longer needed since the modal is removed.
+        
         // --- Components ---
 
         const AudioVisualizer = ({ isActive }) => {
@@ -147,32 +147,9 @@
             return <canvas ref={canvasRef} className="fixed inset-0 pointer-events-none z-50" />;
         };
 
-        // 新增：图片放大模态框
-        const ImageModal = ({ src, title, onClose }) => (
-            <div 
-                className="fixed inset-0 z-[100] flex items-center justify-center p-4 backdrop-blur-3xl bg-black/40 transition-opacity duration-300"
-                onClick={onClose}
-            >
-                <div 
-                    className="relative max-w-4xl max-h-full rounded-2xl overflow-hidden shadow-2xl transition-transform duration-300 transform scale-95 opacity-0 animate-in fade-in zoom-in-50"
-                    onClick={e => e.stopPropagation()} // Prevent closing when clicking on the image container
-                >
-                    <img src={src} alt={title} className="max-w-full max-h-[85vh] object-contain rounded-xl shadow-2xl" />
-                    <button 
-                        onClick={onClose} 
-                        className="absolute top-4 right-4 p-3 bg-white/30 backdrop-blur-md text-white rounded-full hover:bg-white/50 transition-colors"
-                        title="Close"
-                    >
-                        <Square className="w-6 h-6" />
-                    </button>
-                    <div className="absolute bottom-0 left-0 right-0 p-3 bg-black/50 backdrop-blur-sm text-white text-center text-sm font-medium">
-                        {title} (点击任意处关闭)
-                    </div>
-                </div>
-            </div>
-        );
+        // Image Modal removed as requested.
 
-        const LayerCard = ({ title, subtitle, track, index, total, onPrev, onNext, themeColor, onImageClick }) => {
+        const LayerCard = ({ title, subtitle, track, index, total, onPrev, onNext, themeColor }) => {
             const [imgError, setImgError] = useState(false);
 
             useEffect(() => {
@@ -192,26 +169,23 @@
                     </div>
 
                     <div 
-                        className="relative w-full h-auto bg-slate-200 group overflow-hidden cursor-pointer"
-                        onClick={() => onImageClick(track)}
+                        className="relative w-full h-auto bg-slate-200 group overflow-hidden"
                     >
                         {!imgError ? (
                             <img 
                                 src={track.img} 
                                 alt={track.title} 
-                                className="w-full h-full object-cover aspect-[1/1] sm:aspect-video md:aspect-[4/3] transition-transform duration-700 group-hover:scale-[1.02]"
+                                className="w-full h-full object-cover aspect-[1/1] transition-transform duration-700 group-hover:scale-[1.02]"
                                 onError={() => setImgError(true)}
                             />
                         ) : (
                             <div className="w-full h-64 sm:h-80 flex flex-col items-center justify-center text-slate-400 p-4 text-center bg-slate-100">
                                 <MapPin size={32} className="mb-2 opacity-50"/>
                                 <p className="text-xs">Image not found: <br/><span className="font-mono text-indigo-400">{track.img}</span></p>
-                                <p className="text-[10px] mt-1 opacity-60">(请上传对应图片到 GitHub)</p>
+                                <p className="text-[10px] mt-1 opacity-60">(Upload required for GitHub deployment)</p>
                             </div>
                         )}
-                        <div className="absolute inset-0 flex items-center justify-center bg-black/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                             <Maximize className="text-white drop-shadow-lg" size={40} />
-                        </div>
+                        {/* Removed Maximize Icon Overlay */}
                         <div className="absolute top-4 right-4 flex items-center space-x-2">
                            <button onClick={(e) => {e.stopPropagation(); onPrev();}} className="p-2 bg-black/20 hover:bg-black/40 text-white rounded-full backdrop-blur-sm transition-all" title="Previous Track">
                                 <ChevronLeft size={20} />
@@ -280,7 +254,10 @@
                     
                     <div className="flex-grow text-center sm:text-left">
                         <h4 className="font-bold text-slate-800">{rec.title}</h4>
-                        <p className="text-xs text-slate-400">{rec.date} · {rec.isSeeded ? 'Pre-loaded' : 'WebM Audio'}</p>
+                        <p className="text-xs text-slate-400">
+                           {rec.date} 
+                           {/* Removed Pre-loaded tag for cleaner presentation */}
+                        </p>
                     </div>
 
                     <audio 
@@ -320,7 +297,6 @@
             const [isRecording, setIsRecording] = useState(false);
             const [recordings, setRecordings] = useState([]);
             const [confettiTrigger, setConfettiTrigger] = useState(0);
-            const [modalImage, setModalImage] = useState(null); // New state for image modal
             
             const mediaRecorderRef = useRef(null);
             const streamRef = useRef(null);
@@ -330,13 +306,13 @@
             const pastTracks = [
                 {
                     title: 'Rudy Lewis, Organ — Trocadero Cinema',
-                    desc: '昔日 Trocadero 电影院的广播录音，管风琴的回响充满了整个大厅。',
+                    desc: 'Historic broadcast ambience from the former Trocadero Cinema at Elephant & Castle, recalling large hall acoustics and organ resonance.',
                     url: './audio/rudy-lewis-trocadero.mp3',
                     img: './img/trocadero-cinema.png' 
                 },
                 {
                     title: 'Market Traders’ Shouts',
-                    desc: '曾经繁华的购物中心，嘈杂的零售噪音与人声交织。',
+                    desc: 'Indoor shopping centre ambience of its time: dense, modern retail noise, overlapping voices, and constant movement.',
                     url: './audio/elephant-shopping-centre.mp3',
                     img: './img/elephant-shopping-centre.png'
                 }
@@ -345,13 +321,13 @@
             const presentTracks = [
                 {
                     title: 'UAL Students’ Canteen',
-                    desc: '原本的学生生活：餐盘的碰撞声、交谈声与共享空间的活力。',
+                    desc: 'Everyday student life: trays, chatter, and bursts of conversation in a shared space.',
                     url: './audio/ual-canteen.mp3',
                     img: './img/ual-canteen.png' 
                 },
                 {
                     title: 'Construction Site',
-                    desc: '当代城市变革的声音：机械轰鸣、金属撞击，标志着城市的转型。',
+                    desc: 'Contemporary urban change: machinery, metal impacts, and intermittent signals marking the city’s transformation.',
                     url: './audio/construction-site.mp3',
                     img: './img/construction-site.png'
                 }
@@ -363,14 +339,14 @@
                         id: 'seeded-1',
                         title: 'Graduate Reflection – Final Week on Campus',
                         url: './audio/rec1.m4a',
-                        date: 'Archive (Pre-loaded)',
+                        date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
                         isSeeded: true
                     },
                     {
                         id: 'seeded-2',
                         title: 'Looking Forward – New Campus & Thanks to the Old',
                         url: './audio/spk2.wav',
-                        date: 'Archive (Pre-loaded)',
+                        date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
                         isSeeded: true
                     }
                 ];
@@ -398,8 +374,8 @@
                         const newRecording = {
                             id: Date.now(),
                             url,
-                            title: `New Voice Fossil (${new Date().toLocaleTimeString()})`,
-                            date: new Date().toLocaleDateString(),
+                            title: `New Voice Fossil (${new Date().toLocaleTimeString('en-US')})`,
+                            date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
                             isSeeded: false
                         };
                         setRecordings(prev => [newRecording, ...prev]);
@@ -410,7 +386,7 @@
                     mediaRecorder.start();
                     setIsRecording(true);
                 } catch (err) {
-                    alert("无法访问麦克风，请确保已授权。");
+                    alert("Microphone permission is required to record.");
                     console.error(err);
                 }
             };
@@ -427,27 +403,13 @@
                 if (el) el.scrollIntoView({ behavior: 'smooth' });
             };
             
-            // Image Modal Handlers
-            const openImageModal = (track) => {
-                setModalImage({ src: track.img, title: track.title });
-            };
-
-            const closeImageModal = () => {
-                setModalImage(null);
-            };
+            // Image Modal Handlers removed as requested.
 
             return (
                 <div className="min-h-screen bg-slate-50 text-slate-800 overflow-x-hidden relative">
                     <Confetti trigger={confettiTrigger} />
 
-                    {/* Image Modal */}
-                    {modalImage && (
-                        <ImageModal 
-                            src={modalImage.src} 
-                            title={modalImage.title} 
-                            onClose={closeImageModal} 
-                        />
-                    )}
+                    {/* Image Modal component removed */}
 
                     {/* Background Gradients (Less intrusive) */}
                     <div className="fixed inset-0 z-0 overflow-hidden pointer-events-none">
@@ -465,13 +427,13 @@
                             Towards Sonic Fossils
                         </h1>
                         <p className="text-xl md:text-2xl text-slate-600 max-w-2xl leading-relaxed mb-10">
-                            在城市中留下你的声音化石。<br/>聆听历史的回响，并记录当下的瞬间。
+                            Speak, record, and leave your voice fossil in the city. Listen to the echoes of the past and capture the present moment.
                         </p>
                         <button 
                             onClick={() => scrollToSection('listen-deck')}
                             className="group relative inline-flex items-center justify-center px-8 py-4 font-semibold text-white transition-all duration-200 bg-indigo-600 rounded-full hover:bg-indigo-700 hover:shadow-lg hover:-translate-y-1 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-600"
                         >
-                            开始体验
+                            Start Exploration
                             <ArrowDown className="ml-2 w-5 h-5 group-hover:translate-y-1 transition-transform" />
                         </button>
                     </header>
@@ -482,9 +444,9 @@
                         <section id="listen-deck" className="scroll-mt-24">
                             <div className="text-center mb-12">
                                 <h2 className="text-3xl font-bold text-slate-900 mb-4 flex items-center justify-center gap-3">
-                                    <Radio className="text-indigo-500" /> 声音图层 (Sonic Layers)
+                                    <Radio className="text-indigo-500" /> Sonic Layers
                                 </h2>
-                                <p className="text-slate-500">对比 Elephant & Castle 的声景：从历史到当下。</p>
+                                <p className="text-slate-500">Compare the soundscapes of Elephant & Castle: Past vs. Present.</p>
                             </div>
 
                             {/* Vertical Stack */}
@@ -498,7 +460,6 @@
                                     themeColor="from-amber-400 to-orange-400"
                                     onPrev={() => setPastIdx((i) => (i - 1 + pastTracks.length) % pastTracks.length)}
                                     onNext={() => setPastIdx((i) => (i + 1) % pastTracks.length)}
-                                    onImageClick={openImageModal}
                                 />
                                 <LayerCard 
                                     title="Present"
@@ -509,7 +470,6 @@
                                     themeColor="from-teal-400 to-emerald-400"
                                     onPrev={() => setPresentIdx((i) => (i - 1 + presentTracks.length) % presentTracks.length)}
                                     onNext={() => setPresentIdx((i) => (i + 1) % presentTracks.length)}
-                                    onImageClick={openImageModal}
                                 />
                             </div>
                         </section>
@@ -525,7 +485,7 @@
                                     </div>
                                     <h2 className="text-3xl font-bold mb-4">Record & Contribute</h2>
                                     <p className="text-indigo-200/80 mb-10 text-lg">
-                                        点击开始录音，留下你的声音化石。它将被加入到城市的数字档案中。
+                                        Tap Start Recording, speak for a few seconds, then stop to add your sound to the archive.
                                     </p>
 
                                     <div className="h-24 flex items-center justify-center mb-8 bg-black/20 rounded-2xl backdrop-blur-sm border border-white/5">
@@ -543,7 +503,7 @@
                                                 className="flex items-center gap-3 px-8 py-4 bg-indigo-500 hover:bg-indigo-400 text-white rounded-full font-bold transition-all duration-200 hover:scale-105 hover:shadow-[0_0_20px_rgba(99,102,241,0.5)]"
                                             >
                                                 <div className="w-3 h-3 bg-white rounded-full animate-pulse"></div>
-                                                开始录音
+                                                Start Recording
                                             </button>
                                         ) : (
                                             <button
@@ -551,14 +511,14 @@
                                                 className="flex items-center gap-3 px-8 py-4 bg-rose-500 hover:bg-rose-400 text-white rounded-full font-bold transition-all duration-200 hover:scale-105 hover:shadow-[0_0_20px_rgba(244,63,94,0.5)]"
                                             >
                                                 <Square size={18} fill="currentColor" />
-                                                停止录制
+                                                Stop Recording
                                             </button>
                                         )}
                                     </div>
                                     
                                     {isRecording && (
                                         <p className="mt-6 text-rose-400 font-medium animate-pulse">
-                                            正在录音中... 再次点击停止
+                                            Recording... Click Stop when finished.
                                         </p>
                                     )}
                                 </div>
@@ -579,7 +539,7 @@
                                 {recordings.length === 0 ? (
                                     <div className="text-center py-12 border-2 border-dashed border-slate-200 rounded-2xl">
                                         <Activity className="mx-auto text-slate-300 mb-3" size={32} />
-                                        <p className="text-slate-400">暂无新录音。去上面的录音台试试吧！</p>
+                                        <p className="text-slate-400">No recent recordings. Try recording a voice fossil above!</p>
                                     </div>
                                 ) : (
                                     recordings.map((rec) => (
@@ -594,7 +554,7 @@
                         </section>
 
                         <footer className="text-center text-slate-400 py-12 text-sm">
-                            <p>© 2025 Towards Sonic Fossils. Concept & Design.</p>
+                            <p>© 2025 Towards Sonic Fossils. Final Project, Elephant & Castle.</p>
                         </footer>
                     </main>
                 </div>
