@@ -79,7 +79,6 @@
         const ArrowDown = (props) => <IconWrapper {...props}><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></IconWrapper>;
         const Disc = (props) => <IconWrapper {...props}><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/></IconWrapper>;
         const MapPin = (props) => <IconWrapper {...props}><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></IconWrapper>;
-        // Maximize icon is no longer needed since the modal is removed.
         
         // --- Components ---
 
@@ -147,8 +146,6 @@
             return <canvas ref={canvasRef} className="fixed inset-0 pointer-events-none z-50" />;
         };
 
-        // Image Modal removed as requested.
-
         const LayerCard = ({ title, subtitle, track, index, total, onPrev, onNext, themeColor }) => {
             const [imgError, setImgError] = useState(false);
 
@@ -158,7 +155,6 @@
 
             return (
                 <div className="bg-white/70 backdrop-blur-xl border border-white/50 rounded-3xl shadow-lg hover:shadow-xl overflow-hidden flex flex-col transform transition-all duration-300 mb-8">
-                    <div className={`h-2 w-full bg-gradient-to-r ${themeColor}`}></div>
                     
                     <div className="p-6">
                         <div className="flex items-center gap-2 mb-1 opacity-60">
@@ -185,7 +181,6 @@
                                 <p className="text-[10px] mt-1 opacity-60">(Upload required for GitHub deployment)</p>
                             </div>
                         )}
-                        {/* Removed Maximize Icon Overlay */}
                         <div className="absolute top-4 right-4 flex items-center space-x-2">
                            <button onClick={(e) => {e.stopPropagation(); onPrev();}} className="p-2 bg-black/20 hover:bg-black/40 text-white rounded-full backdrop-blur-sm transition-all" title="Previous Track">
                                 <ChevronLeft size={20} />
@@ -256,7 +251,6 @@
                         <h4 className="font-bold text-slate-800">{rec.title}</h4>
                         <p className="text-xs text-slate-400">
                            {rec.date} 
-                           {/* Removed Pre-loaded tag for cleaner presentation */}
                         </p>
                     </div>
 
@@ -356,11 +350,31 @@
             const [pastIdx, setPastIdx] = useState(0);
             const [presentIdx, setPresentIdx] = useState(0);
 
+            // Helper function to find compatible MIME type
+            const getSupportedMimeType = () => {
+                const types = [
+                    'audio/webm;codecs=opus',
+                    'audio/mp4', // Common for iOS Safari
+                    'audio/mpeg', // Fallback
+                    'audio/webm',
+                ];
+                for (let type of types) {
+                    if (MediaRecorder.isTypeSupported(type)) {
+                        return type;
+                    }
+                }
+                return 'audio/webm'; // Default fallback
+            };
+
+
             const startRecording = async () => {
                 try {
                     const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
                     streamRef.current = stream;
-                    const mediaRecorder = new MediaRecorder(stream);
+                    
+                    const mimeType = getSupportedMimeType();
+                    const mediaRecorder = new MediaRecorder(stream, { mimeType: mimeType });
+                    
                     mediaRecorderRef.current = mediaRecorder;
                     chunksRef.current = [];
 
@@ -369,7 +383,8 @@
                     };
 
                     mediaRecorder.onstop = () => {
-                        const blob = new Blob(chunksRef.current, { type: 'audio/webm' });
+                        // Use the MIME type from the first chunk for better compatibility
+                        const blob = new Blob(chunksRef.current, { type: chunksRef.current[0]?.type || mimeType });
                         const url = URL.createObjectURL(blob);
                         const newRecording = {
                             id: Date.now(),
@@ -403,13 +418,9 @@
                 if (el) el.scrollIntoView({ behavior: 'smooth' });
             };
             
-            // Image Modal Handlers removed as requested.
-
             return (
                 <div className="min-h-screen bg-slate-50 text-slate-800 overflow-x-hidden relative">
                     <Confetti trigger={confettiTrigger} />
-
-                    {/* Image Modal component removed */}
 
                     {/* Background Gradients (Less intrusive) */}
                     <div className="fixed inset-0 z-0 overflow-hidden pointer-events-none">
@@ -419,7 +430,9 @@
                     </div>
 
                     {/* Header */}
-                    <header className="relative z-10 flex flex-col items-center justify-center min-h-[50vh] px-6 text-center bg-white/50 backdrop-blur-lg border-b border-white/30 shadow-sm">
+                    {/* FIXED: Removed all styling that creates a separate layer (bg, backdrop-blur, shadow) 
+                       so the header inherits the body's transparent glass-like background. */}
+                    <header className="relative z-10 flex flex-col items-center justify-center min-h-[50vh] px-6 text-center">
                         <div className="inline-flex items-center px-4 py-2 mb-6 rounded-full bg-white/70 backdrop-blur-md border border-white/50 shadow-md text-indigo-900 text-sm font-medium">
                             <Headphones size={16} className="mr-2" /> Elephant & Castle Edition
                         </div>
@@ -438,7 +451,8 @@
                         </button>
                     </header>
 
-                    <main className="relative z-10 max-w-4xl mx-auto px-4 py-16 space-y-20">
+                    {/* FIXED: Removed top padding from main to prevent visual gap */}
+                    <main className="relative z-10 max-w-4xl mx-auto px-4 py-16 pt-0 space-y-20">
                         
                         {/* SECTION 1: LISTEN DECK (Vertical Layout) */}
                         <section id="listen-deck" className="scroll-mt-24">
