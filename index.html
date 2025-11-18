@@ -21,7 +21,7 @@
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
             min-height: 100vh;
         }
-        /* Blob Animations */
+        /* Blob Animations (for fixed background elements) */
         @keyframes blob {
             0% { transform: translate(0px, 0px) scale(1); }
             33% { transform: translate(30px, -50px) scale(1.1); }
@@ -29,13 +29,19 @@
             100% { transform: translate(0px, 0px) scale(1); }
         }
         .animate-blob {
-            animation: blob 7s infinite;
+            animation: blob 10s infinite; /* Increased duration for smoother, slower flow */
         }
         .animation-delay-2000 {
             animation-delay: 2s;
         }
         .animation-delay-4000 {
             animation-delay: 4s;
+        }
+        .animation-delay-6000 {
+            animation-delay: 6s;
+        }
+        .animation-delay-8000 {
+            animation-delay: 8s;
         }
         /* Custom background gradient for advanced glassmorphism */
         .glass-bg-container {
@@ -51,6 +57,19 @@
         }
         ::-webkit-scrollbar-thumb:hover {
             background: rgba(100, 100, 100, 0.6);
+        }
+
+        /* Splash Screen specific styles */
+        @keyframes pulse-ring {
+            0% { transform: scale(0.3); opacity: 0.8; }
+            80% { transform: scale(1.2); opacity: 0; }
+            100% { transform: scale(1.2); opacity: 0; }
+        }
+        
+        /* New: Pulse for interactive blobs (1 second fade-out/expand) */
+        @keyframes pulse-expand {
+            0% { transform: translate(-50%, -50%) scale(0.1); opacity: 0.8; }
+            100% { transform: translate(-50%, -50%) scale(3); opacity: 0; }
         }
     </style>
 </head>
@@ -82,7 +101,71 @@
         const Camera = (props) => <IconWrapper {...props}><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3L14.5 4z"/><circle cx="12" cy="13" r="3"/></IconWrapper>;
 
 
-        // --- Components ---
+        // --- Splash Screen Component ---
+        const SplashScreen = ({ onEnter }) => {
+            return (
+                <div className="fixed inset-0 z-[100] flex flex-col items-center justify-center transition-opacity duration-1000 ease-in-out bg-white/90 backdrop-blur-xl">
+                    
+                    {/* Background Blobs for Splash Screen (Matches Main Content) */}
+                    <div className="fixed inset-0 z-0 overflow-hidden pointer-events-none">
+                        <div className="absolute -top-64 -left-64 w-[700px] h-[700px] bg-blue-200 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob"></div>
+                        <div className="absolute top-1/2 right-0 w-[800px] h-[800px] bg-purple-200 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob animation-delay-2000"></div>
+                        <div className="absolute -bottom-64 left-1/4 w-[500px] h-[500px] bg-pink-200 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob animation-delay-4000"></div>
+                        <div className="absolute top-1/4 left-1/3 w-[400px] h-[400px] bg-indigo-200 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-6000"></div>
+                    </div>
+
+                    {/* Content: Removed glass container styling */}
+                    <div className="relative z-10 text-center p-8"> 
+                        {/* Pulsing Ring Effect */}
+                        <div className="relative flex items-center justify-center mx-auto mb-8 w-24 h-24">
+                            <div className="absolute w-20 h-20 border-2 border-indigo-500 rounded-full" style={{ animation: 'pulse-ring 3s infinite ease-out' }}></div>
+                            <div className="absolute w-20 h-20 border-2 border-purple-500 rounded-full" style={{ animation: 'pulse-ring 3s infinite ease-out', animationDelay: '1.5s' }}></div>
+                            <Headphones className="relative text-slate-800" size={36} />
+                        </div>
+
+                        <h1 className="text-6xl md:text-8xl font-black tracking-tight mb-4 text-transparent bg-clip-text bg-gradient-to-r from-slate-900 via-indigo-800 to-slate-900">
+                            SONIC FOSSILS
+                        </h1>
+                        <h2 className="text-xl md:text-3xl text-slate-600 mb-10 font-light">
+                            Elephant & Castle: Archive of Echoes
+                        </h2>
+                        <button
+                            onClick={onEnter}
+                            className="group relative inline-flex items-center justify-center px-10 py-4 font-semibold text-white transition-all duration-300 bg-indigo-600 rounded-full hover:bg-indigo-700 hover:shadow-2xl hover:shadow-indigo-500/50 focus:outline-none focus:ring-4 focus:ring-offset-2 focus:ring-indigo-600"
+                        >
+                            Enter Archive
+                            <ChevronRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                        </button>
+                    </div>
+                </div>
+            );
+        };
+
+
+        // --- Dynamic Interactive Blob Component ---
+        const InteractiveBlob = ({ x, y }) => {
+            // This component applies the 'pulse-expand' animation
+            return (
+                <div 
+                    className="absolute pointer-events-none transition-opacity duration-1000 ease-out z-50"
+                    style={{ 
+                        left: `${x}px`, 
+                        top: `${y}px`, 
+                        width: '40px', 
+                        height: '40px', 
+                        backgroundColor: 'rgba(99, 102, 241, 0.7)', // Indigo pulse color
+                        borderRadius: '50%', 
+                        transform: 'translate(-50%, -50%) scale(0.1)', 
+                        opacity: 0,
+                        animation: 'pulse-expand 1s forwards ease-out'
+                    }}
+                />
+            );
+        };
+
+
+        // --- Main Components (rest of the app) ---
+
         const AudioVisualizer = ({ isActive }) => {
             return (
                 <div className="flex items-center justify-center gap-1 h-12 transition-all duration-300">
@@ -288,10 +371,14 @@
             );
         };
 
+        const MAX_BLOBS = 10;
+
         const App = () => {
+            const [showSplash, setShowSplash] = useState(true); // New state for splash screen
             const [isRecording, setIsRecording] = useState(false);
             const [recordings, setRecordings] = useState([]);
             const [confettiTrigger, setConfettiTrigger] = useState(0);
+            const [interactiveBlobs, setInteractiveBlobs] = useState([]); // State for dynamic blobs
             
             const mediaRecorderRef = useRef(null);
             const streamRef = useRef(null);
@@ -418,16 +505,57 @@
                 const el = document.getElementById(id);
                 if (el) el.scrollIntoView({ behavior: 'smooth' });
             };
-            
-            return (
-                <div className="min-h-screen bg-slate-50 text-slate-800 overflow-x-hidden relative">
-                    <Confetti trigger={confettiTrigger} />
 
-                    {/* Background Gradients (Less intrusive) */}
+            // New: Handle global click/tap interaction for dynamic blobs
+            const handleInteraction = (e) => {
+                if (showSplash) return; // Ignore clicks if splash screen is active
+
+                // Check if the click target is an interactive element (button, link, audio control)
+                const targetTagName = e.target.tagName.toLowerCase();
+                if (['button', 'a', 'audio', 'input', 'select', 'textarea'].includes(targetTagName) || e.target.closest('button, a, audio, input, select, textarea')) {
+                    return; 
+                }
+                
+                // Get coordinates (handle both mouse and touch)
+                const clientX = e.clientX || e.touches?.[0]?.clientX;
+                const clientY = e.clientY || e.touches?.[0]?.clientY;
+
+                if (clientX === undefined || clientY === undefined) return;
+
+                const newBlob = {
+                    id: Date.now(),
+                    x: clientX,
+                    y: clientY,
+                };
+
+                setInteractiveBlobs(prevBlobs => {
+                    const updatedBlobs = [...prevBlobs, newBlob];
+                    // Limit to MAX_BLOBS (10)
+                    return updatedBlobs.slice(-MAX_BLOBS); 
+                });
+
+                // Remove the blob after the animation completes (1000ms or 1s)
+                setTimeout(() => {
+                    setInteractiveBlobs(prevBlobs => prevBlobs.filter(blob => blob.id !== newBlob.id));
+                }, 1000); 
+            };
+
+
+            // Main Content Render function
+            const MainContent = () => (
+                <>
+                    {/* Background Gradients (Enhanced for density and theme) */}
                     <div className="fixed inset-0 z-0 overflow-hidden pointer-events-none">
-                        <div className="absolute -top-64 -left-64 w-[500px] h-[500px] bg-blue-100 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob"></div>
-                        <div className="absolute top-1/2 right-0 w-[600px] h-[600px] bg-purple-100 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob animation-delay-2000"></div>
-                        <div className="absolute -bottom-64 left-1/4 w-[400px] h-[400px] bg-pink-100 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob animation-delay-4000"></div>
+                        {/* Blob 1: Larger, more transparent Blue/Cyan */}
+                        <div className="absolute -top-64 -left-64 w-[700px] h-[700px] bg-blue-200 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob"></div>
+                        {/* Blob 2: Larger, more transparent Purple */}
+                        <div className="absolute top-1/2 right-0 w-[800px] h-[800px] bg-purple-200 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob animation-delay-2000"></div>
+                        {/* Blob 3: Pink (original position) */}
+                        <div className="absolute -bottom-64 left-1/4 w-[500px] h-[500px] bg-pink-200 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob animation-delay-4000"></div>
+                        {/* Blob 4: New, smaller center-ish element for depth */}
+                        <div className="absolute top-1/4 left-1/3 w-[400px] h-[400px] bg-indigo-200 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-6000"></div>
+                        {/* Blob 5: Extra element for more presence */}
+                        <div className="absolute top-0 right-1/4 w-[300px] h-[300px] bg-teal-200 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-8000"></div>
                     </div>
 
                     {/* Header: Added pt-20 for top spacing */}
@@ -487,7 +615,7 @@
                             </div>
                         </section>
 
-                        {/* SECTION 2: RECORD STATION (Used to be 1.5) */}
+                        {/* SECTION 2: RECORD STATION */}
                         <section id="record-station" className="scroll-mt-24">
                             <div className="bg-gradient-to-br from-slate-900 to-indigo-950 rounded-3xl p-8 md:p-12 text-white shadow-2xl relative overflow-hidden">
                                 <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
@@ -570,6 +698,26 @@
                             <p>© 2025 Towards Sonic Fossils. Final Project, Elephant & Castle.</p>
                         </footer>
                     </main>
+                </>
+            );
+
+            return (
+                <div 
+                    className="min-h-screen bg-slate-50 text-slate-800 overflow-x-hidden relative"
+                    onPointerDown={handleInteraction} // Universal handler for mouse/touch
+                >
+                    <Confetti trigger={confettiTrigger} />
+                    
+                    {/* Render Interactive Blobs */}
+                    {interactiveBlobs.map(blob => (
+                        <InteractiveBlob key={blob.id} x={blob.x} y={blob.y} />
+                    ))}
+
+                    {showSplash ? (
+                        <SplashScreen onEnter={() => setShowSplash(false)} />
+                    ) : (
+                        <MainContent />
+                    )}
                 </div>
             );
         };
